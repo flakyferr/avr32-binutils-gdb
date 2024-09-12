@@ -75,19 +75,27 @@ mi_cmd_break_insert (char *command, char **argv, int argc)
   int ignore_count = 0;
   char *condition = NULL;
   enum gdb_rc rc;
+  int pending = 0;
+  int enabled = 1;
+  int tracepoint = 0;
   struct gdb_events *old_hooks;
   enum opt
     {
       HARDWARE_OPT, TEMP_OPT /*, REGEXP_OPT */ , CONDITION_OPT,
-      IGNORE_COUNT_OPT, THREAD_OPT
+      IGNORE_COUNT_OPT, THREAD_OPT, PENDING_OPT, DISABLE_OPT,
+      TRACEPOINT_OPT
     };
   static struct mi_opt opts[] =
   {
     {"h", HARDWARE_OPT, 0},
     {"t", TEMP_OPT, 0},
+    {"f", LOCSPEC_IGNORE_OPT, 0},
     {"c", CONDITION_OPT, 1},
     {"i", IGNORE_COUNT_OPT, 1},
     {"p", THREAD_OPT, 1},
+    {"f", PENDING_OPT, 0},
+    {"d", DISABLE_OPT, 0},
+    {"a", TRACEPOINT_OPT, 0},
     { 0, 0, 0 }
   };
 
@@ -99,7 +107,7 @@ mi_cmd_break_insert (char *command, char **argv, int argc)
     {
       int opt = mi_getopt ("mi_cmd_break_insert", argc, argv, opts, &optind, &optarg);
       if (opt < 0)
-	break;
+	      break;
       switch ((enum opt) opt)
 	{
 	case TEMP_OPT:
@@ -113,6 +121,15 @@ mi_cmd_break_insert (char *command, char **argv, int argc)
 	  type = REGEXP_BP;
 	  break;
 #endif
+	case TRACEPOINT_OPT:
+	  tracepoint = 1;
+	  break;
+  case PENDING_OPT:
+	  pending = 1;
+	  break;
+	case DISABLE_OPT:
+	  enabled = 0;
+	  break;
 	case CONDITION_OPT:
 	  condition = optarg;
 	  break;
@@ -122,6 +139,7 @@ mi_cmd_break_insert (char *command, char **argv, int argc)
 	case THREAD_OPT:
 	  thread = atol (optarg);
 	  break;
+
 	}
     }
 
