@@ -82,7 +82,7 @@ mi_cmd_break_insert (char *command, char **argv, int argc)
   enum opt
     {
       HARDWARE_OPT, TEMP_OPT /*, REGEXP_OPT */ , CONDITION_OPT,
-      IGNORE_COUNT_OPT, THREAD_OPT, PENDING_OPT, DISABLE_OPT,
+      IGNORE_COUNT_OPT, THREAD_OPT, PENDING_OPT, DISABLE_OPT, LOCSPEC_IGNORE_OPT,
       TRACEPOINT_OPT
     };
   static struct mi_opt opts[] =
